@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id Int @id @default(autoincrement()) //чтобы автоматически id каждого последующего было = +1
+  name String
+  email String @unique
+  password String
+
+  events Event[]
+  participations Participation[] //списко событий, на которые записался пользователь
+}
+
+model Event {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now()) //благодаря функции now() будет текущее время
+  updatedAt DateTime @updatedAt //позволяет автоматически обновлять при каждом изменении сущности
+
+  title String
+  description String? //? указывает на то что это поле не обязательное
+  date DateTime
+
+  authorId Int
+  author User @relation(fields: [authorId], references: [id]) //пишем что поле authorId будет ссылаться на id из сущности User
+  participations Participation[] //список пользователей, которые записались на событие
+}
+
+//сущность позволяющая подписываться пользователям на разные события
+model Participation {
+  userId Int
+  eventId Int
+
+  user User @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@id([userId, eventId]) //связка полей будет служить id
+}
