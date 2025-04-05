@@ -1,4 +1,5 @@
 import { TRPCProvider } from "@/server/trpc/client";
+import "@/app/globals.css";
 
 export default function RootLayout({
   children,
