@@ -1,9 +1,14 @@
-import { trpc } from "@/server/trpc/server";
-import { ClientHome } from "./events/page.jsx";
-import { HydrateClient } from "@/server/trpc/server";
-
 export default async function Home() {
-  await trpc.hello.prefetch({ text: "Server" });
-
-  return <div>главная</div>;
+  const res = await fetch("http://localhost:3000/api/hello");
+  const users: User[] = await res.json();
+  return (
+    <div>
+      главная
+      <div>
+        {users.map((user) => (
+          <div key={user.id}>{user.name}</div>
+        ))}
+      </div>
+    </div>
+  );
 }

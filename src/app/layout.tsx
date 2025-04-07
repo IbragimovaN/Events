@@ -1,15 +1,38 @@
+// import { TRPCProvider } from "@/server/trpc/client";
+// import "@/app/globals.css";
+
+// export default function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     <html>
+//       <body>
+//         <TRPCProvider>{children}</TRPCProvider>
+//       </body>
+//     </html>
+//   );
+// }
 import { TRPCProvider } from "@/server/trpc/client";
+import { AuthProvider } from "@/auth/providers";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth/auth.config";
 import "@/app/globals.css";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html>
       <body>
-        <TRPCProvider>{children}</TRPCProvider>
+        <AuthProvider session={session}>
+          <TRPCProvider>{children}</TRPCProvider>
+        </AuthProvider>
       </body>
     </html>
   );
