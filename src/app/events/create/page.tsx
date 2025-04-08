@@ -8,7 +8,6 @@ export default function CreateEventPage() {
   const { mutate } = trpc.event.create.useMutation();
 
   const handleSubmit = (data: CreateEventValues) => {
-    console.log(data);
     mutate(data);
   };
   return (

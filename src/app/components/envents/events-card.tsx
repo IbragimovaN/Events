@@ -8,7 +8,7 @@ type EventCardProps = {
   title: string;
   description: string | null;
   date: Date;
-  //action: ReactNode;
+  action: ReactNode;
 };
 
 export const EventCard = ({
@@ -16,8 +16,8 @@ export const EventCard = ({
   title,
   description,
   date,
-  //action,
-}) => {
+  action,
+}: EventCardProps) => {
   return (
     <div className="flex font-sans rounded-lg shadow-xl overflow-hidden">
       <div className="flex-none w-48 relative">
@@ -42,7 +42,7 @@ export const EventCard = ({
         </div>
         <div className="flex space-x-4 text-sm font-medium">
           <div className="flex-auto flex space-x-4">
-            {/* {action} */}
+            {action}
             <Link
               href={`/events/${id}`}
               className="h-10 px-6 font-semibold rounded-md border border-slate-200 text-slate-900 align-middle leading-10"
