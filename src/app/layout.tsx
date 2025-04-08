@@ -1,19 +1,3 @@
-// import { TRPCProvider } from "@/server/trpc/client";
-// import "@/app/globals.css";
-
-// export default function RootLayout({
-//   children,
-// }: {
-//   children: React.ReactNode;
-// }) {
-//   return (
-//     <html>
-//       <body>
-//         <TRPCProvider>{children}</TRPCProvider>
-//       </body>
-//     </html>
-//   );
-// }
 import { TRPCProvider } from "@/server/trpc/client";
 import { AuthProvider } from "@/auth/providers";
 import { getServerSession } from "next-auth";
