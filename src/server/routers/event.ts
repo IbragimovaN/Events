@@ -30,8 +30,20 @@ export const eventRouter = createTRPCRouter({
         },
       });
     }),
-  findMany: baseProcedure.query(() => {
-    return prisma.event.findMany();
+  // findMany: baseProcedure.query(() => {
+  //   return prisma.event.findMany();
+  // }),
+  findMany: baseProcedure.query(async ({ ctx: { user } }) => {
+    const events = await prisma.event.findMany({
+      include: {
+        participations: true,
+      },
+    });
+
+    return events.map(({ participations, ...event }) => ({
+      ...event,
+      isJoined: participations.some(({ userId }) => userId === user?.id),
+    }));
   }),
   create: baseProcedure
     .input(CreateEventSchema)

@@ -9,6 +9,7 @@ type EventCardProps = {
   description: string | null;
   date: Date;
   action: ReactNode;
+  isJoined: boolean;
 };
 
 export const EventCard = ({
@@ -44,7 +45,7 @@ export const EventCard = ({
           <div className="flex-auto flex space-x-4">
             {action}
             <Link
-              href={`/events/${id}`}
+              href={`/${id}`}
               className="h-10 px-6 font-semibold rounded-md border border-slate-200 text-slate-900 align-middle leading-10"
             >
               Подробнее
