@@ -30,9 +30,7 @@ export const eventRouter = createTRPCRouter({
         },
       });
     }),
-  // findMany: baseProcedure.query(() => {
-  //   return prisma.event.findMany();
-  // }),
+
   findMany: baseProcedure.query(async ({ ctx: { user } }) => {
     const events = await prisma.event.findMany({
       include: {
@@ -60,10 +58,25 @@ export const eventRouter = createTRPCRouter({
     .input(JoinEventSchema)
     .use(isAuth)
     .mutation(({ input, ctx: { user } }) => {
+      console.log("imput:", input, "user:", user);
       return prisma.participation.create({
         data: {
           eventId: input.id,
           userId: user.id,
+        },
+      });
+    }),
+
+  leave: baseProcedure
+    .input(JoinEventSchema)
+    .use(isAuth)
+    .mutation(({ input, ctx: { user } }) => {
+      return prisma.participation.delete({
+        where: {
+          userId_eventId: {
+            userId: user.id,
+            eventId: input.id,
+          },
         },
       });
     }),

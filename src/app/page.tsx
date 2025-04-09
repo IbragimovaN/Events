@@ -2,8 +2,8 @@
 // <-- hooks can only be used in client components
 import { trpc } from "@/server/trpc/client";
 import { EventCard } from "./components/envents/events-card";
-import { JoinEventButton } from "./components/join-event/join-event-button";
 import Header from "./components/header/header";
+import { EventButton } from "./components/button-join-or-leave-event/event-button";
 
 export default function ClientHome() {
   const { data, refetch } = trpc.event.findMany.useQuery();
@@ -19,8 +19,22 @@ export default function ClientHome() {
             <EventCard
               {...event}
               action={
-                !event.isJoined && (
-                  <JoinEventButton eventId={event.id} onSuccess={refetch} />
+                event.isJoined ? (
+                  <EventButton
+                    eventId={event.id}
+                    onSuccess={refetch}
+                    color="bg-red-500"
+                    procedure="leave"
+                    text="Покинуть"
+                  />
+                ) : (
+                  <EventButton
+                    eventId={event.id}
+                    onSuccess={refetch}
+                    color="bg-green-400"
+                    procedure="join"
+                    text="Присоединиться"
+                  />
                 )
               }
             />
