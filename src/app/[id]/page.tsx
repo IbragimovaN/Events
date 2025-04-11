@@ -51,13 +51,13 @@ export default function Event() {
             {" "}
             <Link
               href={`/edit/${eventId}`}
-              className="px-4 py-2 bg-red-300 text-white rounded"
+              className="px-4 py-2 text-blue-900 hover:text-blue-700"
             >
               Редактировать
             </Link>
             <button
               onClick={handleDelete}
-              className="px-4 py-2 bg-red-500 text-white rounded"
+              className="px-4 py-2 text-red-700 cursor-pointer hover:text-red-600"
             >
               Удалить
             </button>
