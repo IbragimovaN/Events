@@ -1,7 +1,7 @@
 "use client";
-import CreateEventForm, {
+import CreateAndEditEventForm, {
   CreateEventValues,
-} from "@/app/components/envents/createEventsForm";
+} from "@/app/components/envents/createAndEditEventsForm";
 import { trpc } from "@/server/trpc/client";
 import { useRouter } from "next/navigation";
 
@@ -9,7 +9,7 @@ export default function CreateEventPage() {
   const router = useRouter();
   const { mutate } = trpc.event.create.useMutation({
     onSuccess: (data) => {
-      router.push(`/events/${data.id}`);
+      router.push(`/${data.id}`);
     },
   });
 
@@ -18,7 +18,7 @@ export default function CreateEventPage() {
   };
   return (
     <div className="mx-auto max-w-4xl ">
-      <CreateEventForm onSubmit={handleSubmit} />
+      <CreateAndEditEventForm onSubmit={handleSubmit} />
     </div>
   );
 }

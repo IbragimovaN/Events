@@ -3,28 +3,56 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateEventSchema } from "@/server/trpc/schema";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 export type CreateEventValues = z.infer<typeof CreateEventSchema>;
+
 type CreateEventFormProps = {
   onSubmit: (data: CreateEventValues) => void;
+  defaultValues?: Partial<CreateEventValues>;
+  isEditing?: boolean;
 };
 
-export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
+// type EditEventType = Omit<CreateEventValues, "date"> & {
+//   date: string;
+// };
+// type CreateEventFormProps = {
+//   onSubmit: (data: CreateEventValues) => void;
+//   defaultValues?: Partial<EditEventType>;
+//   isEditing?: boolean;
+// };
+
+export default function CreateAndEditEventForm({
+  onSubmit,
+  defaultValues,
+  isEditing = false,
+}: CreateEventFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<CreateEventValues>({ resolver: zodResolver(CreateEventSchema) });
+
+    formState: { errors, isSubmitting },
+  } = useForm<CreateEventValues>({
+    resolver: zodResolver(CreateEventSchema),
+
+    defaultValues,
+  });
+
+  const router = useRouter();
+
+  const onCancel = () => {
+    router.back();
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-12">
         <div>
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Событие
+            {isEditing ? "Редактирование события" : "Создание события"}
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Заполните форму для создания события
+            Заполните форму
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -106,14 +134,21 @@ export default function CreateEventForm({ onSubmit }: CreateEventFormProps) {
         <button
           type="button"
           className="text-sm font-semibold leading-6 text-gray-900"
+          onClick={onCancel}
+          disabled={isSubmitting}
         >
           Отмена
         </button>
         <button
+          disabled={isSubmitting}
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Создать
+          {isSubmitting
+            ? "Сохранение..."
+            : isEditing
+            ? "Сохранить изменения"
+            : "Создать"}
         </button>
       </div>
     </form>

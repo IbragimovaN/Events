@@ -3,6 +3,7 @@ import { prisma } from "../db";
 
 import { CreateEventSchema, JoinEventSchema } from "../trpc/schema";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 export const eventRouter = createTRPCRouter({
   findUnique: baseProcedure
     .input(
@@ -35,12 +36,14 @@ export const eventRouter = createTRPCRouter({
     const events = await prisma.event.findMany({
       include: {
         participations: true,
+        author: { select: { id: true } },
       },
     });
 
-    return events.map(({ participations, ...event }) => ({
+    return events.map(({ participations, author, ...event }) => ({
       ...event,
       isJoined: participations.some(({ userId }) => userId === user?.id),
+      isAuthor: author.id === user?.id,
     }));
   }),
   create: baseProcedure
@@ -78,6 +81,43 @@ export const eventRouter = createTRPCRouter({
             eventId: input.id,
           },
         },
+      });
+    }),
+  isAuthor: baseProcedure
+    .input(z.object({ id: z.number() }))
+    .use(isAuth)
+    .query(async ({ input, ctx }) => {
+      const event = await prisma.event.findUnique({
+        where: { id: input.id },
+        select: { authorId: true },
+      });
+      return event?.authorId === ctx.user.id;
+    }),
+
+  update: baseProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        data: CreateEventSchema.partial(),
+      })
+    )
+    .use(isAuth)
+    .mutation(async ({ input, ctx }) => {
+      const event = await prisma.event.findUnique({
+        where: { id: input.id },
+        select: { authorId: true },
+      });
+
+      if (!event || event.authorId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only edit your own events",
+        });
+      }
+
+      return prisma.event.update({
+        where: { id: input.id },
+        data: input.data,
       });
     }),
 });

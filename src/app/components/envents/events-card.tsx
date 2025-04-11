@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
+import { AuthorBadge } from "../author-badg/author-badge";
 
 type EventCardProps = {
   id: number;
@@ -10,6 +11,7 @@ type EventCardProps = {
   date: Date;
   action: ReactNode;
   isJoined: boolean;
+  isAuthor: boolean;
 };
 
 export const EventCard = ({
@@ -18,9 +20,11 @@ export const EventCard = ({
   description,
   date,
   action,
+  isAuthor,
 }: EventCardProps) => {
   return (
-    <div className="flex font-sans rounded-lg shadow-xl overflow-hidden">
+    <div className="flex font-sans rounded-lg shadow-xl overflow-hidden relative">
+      {isAuthor && <AuthorBadge />}
       <div className="flex-none w-48 relative">
         <Image
           src="/poster.png"
