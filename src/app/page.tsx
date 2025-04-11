@@ -1,5 +1,5 @@
 "use client";
-// <-- hooks can only be used in client components
+
 import { trpc } from "@/server/trpc/client";
 import { EventCard } from "./components/envents/events-card";
 import Header from "./components/header/header";

@@ -13,9 +13,12 @@ export default function EditEventPage() {
   const eventId = Number(params.id);
 
   const { data: isAuthor } = trpc.event.isAuthor.useQuery({ id: eventId });
-  const { data: event } = trpc.event.findUnique.useQuery({ id: eventId });
+  const { data: event, refetch } = trpc.event.findUnique.useQuery({
+    id: eventId,
+  });
   const { mutate: updateEvent } = trpc.event.update.useMutation({
     onSuccess: async () => {
+      await refetch();
       router.push(`/${eventId}`);
     },
   });
@@ -45,12 +48,7 @@ export default function EditEventPage() {
     <div className="mx-auto max-w-4xl py-8">
       <CreateAndEditEventForm
         onSubmit={(data) => updateEvent({ id: eventId, data })}
-        // defaultValues={{
-        //   ...defaultValues,
-
-        //   date: defaultValues.date?.toISOString().split("T")[0],
-        // }}
-        defaultValues={defaultValues}
+        eventValues={defaultValues}
         isEditing={true}
       />
     </div>

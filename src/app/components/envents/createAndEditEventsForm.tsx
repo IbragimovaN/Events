@@ -4,39 +4,56 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateEventSchema } from "@/server/trpc/schema";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export type CreateEventValues = z.infer<typeof CreateEventSchema>;
 
 type CreateEventFormProps = {
   onSubmit: (data: CreateEventValues) => void;
-  defaultValues?: Partial<CreateEventValues>;
+  eventValues?: Partial<CreateEventValues>;
   isEditing?: boolean;
 };
 
-// type EditEventType = Omit<CreateEventValues, "date"> & {
-//   date: string;
-// };
-// type CreateEventFormProps = {
-//   onSubmit: (data: CreateEventValues) => void;
-//   defaultValues?: Partial<EditEventType>;
-//   isEditing?: boolean;
-// };
-
 export default function CreateAndEditEventForm({
   onSubmit,
-  defaultValues,
+  eventValues,
   isEditing = false,
 }: CreateEventFormProps) {
+  const [formDefaultValues, setFormDefaultValues] = useState<
+    Partial<CreateEventValues>
+  >(
+    eventValues?.date instanceof Date
+      ? {
+          ...eventValues,
+          date: eventValues.date.toISOString().split("T")[0],
+        }
+      : eventValues || {}
+  );
+
   const {
     register,
     handleSubmit,
-
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<CreateEventValues>({
     resolver: zodResolver(CreateEventSchema),
-
-    defaultValues,
+    defaultValues: formDefaultValues,
   });
+
+  useEffect(() => {
+    if (eventValues) {
+      const values =
+        eventValues.date instanceof Date
+          ? {
+              ...eventValues,
+              date: eventValues.date.toISOString().split("T")[0],
+            }
+          : eventValues;
+
+      setFormDefaultValues(values);
+      reset(values);
+    }
+  }, [eventValues, reset]);
 
   const router = useRouter();
 
