@@ -1,6 +1,8 @@
 "use client";
 
 import { trpc } from "@/server/trpc/client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type EventButtonProps = {
   eventId: number;
@@ -17,9 +19,16 @@ export const EventButton = ({
   procedure,
   text,
 }: EventButtonProps) => {
+  const router = useRouter();
+  const { status } = useSession();
+
   const { mutate } = trpc.event[procedure].useMutation({ onSuccess });
 
   const handleClick = () => {
+    if (status === "unauthenticated") {
+      router.push("/api/auth/signin");
+      return;
+    }
     mutate({ id: eventId });
   };
 
