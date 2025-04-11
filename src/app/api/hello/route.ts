@@ -6,9 +6,6 @@ export async function GET() {
     const users = await prisma.user.findMany();
     return NextResponse.json(users);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Не удалось загрузить пользователей" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

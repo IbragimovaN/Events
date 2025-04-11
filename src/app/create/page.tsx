@@ -7,8 +7,10 @@ import { useRouter } from "next/navigation";
 
 export default function CreateEventPage() {
   const router = useRouter();
+  const utils = trpc.useUtils();
   const { mutate } = trpc.event.create.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await utils.event.findMany.invalidate();
       router.push(`/${data.id}`);
     },
   });

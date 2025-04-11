@@ -7,7 +7,6 @@ import { EventButton } from "./components/button-join-or-leave-event/event-butto
 
 export default function ClientHome() {
   const { data, refetch } = trpc.event.findMany.useQuery();
-  console.log(data);
 
   return (
     <>

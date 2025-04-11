@@ -11,7 +11,7 @@ export const eventRouter = createTRPCRouter({
         id: z.number(),
       })
     )
-    .use(isAuth)
+    // .use(isAuth)
     .query(({ input }) => {
       return prisma.event.findUnique({
         where: input,
@@ -118,6 +118,30 @@ export const eventRouter = createTRPCRouter({
       return prisma.event.update({
         where: { id: input.id },
         data: input.data,
+      });
+    }),
+  delete: baseProcedure
+    .input(z.object({ id: z.number() }))
+    .use(isAuth)
+    .mutation(async ({ input, ctx }) => {
+      const event = await prisma.event.findUnique({
+        where: { id: input.id },
+        select: { authorId: true },
+      });
+
+      if (!event || event.authorId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only delete your own events",
+        });
+      }
+
+      await prisma.participation.deleteMany({
+        where: { eventId: input.id },
+      });
+
+      return prisma.event.delete({
+        where: { id: input.id },
       });
     }),
 });
