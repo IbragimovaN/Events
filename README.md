@@ -34,6 +34,6 @@ npm install
 npm run dev
 ```
 ## Скриншоты интерфейса
-![Интерфейс](event.PNG)
-![Интерфейс](event2.PNG)
+![Интерфейс](events.PNG)
+![Интерфейс](events2.PNG)
 
